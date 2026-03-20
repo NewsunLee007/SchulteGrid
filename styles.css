@@ -1,0 +1,324 @@
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #0f172a;
+    --card-bg: #ffffff;
+    --border-color: #cbd5e1;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary-color: #10b981;
+    --secondary-hover: #059669;
+    --grid-border: #334155;
+    --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --scale-factor: 1rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 控制面板样式 */
+.controls {
+    margin-bottom: 24px;
+}
+
+.header-titles {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header-titles h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.025em;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.settings-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.setting-item label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #475569;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    color: var(--text-color);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-select select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background-color: #fff;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* 仅打印显示的页眉 */
+.only-print {
+    display: none;
+}
+
+/* 舒尔特方格展示区 */
+.grid-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.grid-container {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 保持严格正方形 */
+    border: 2px solid var(--grid-border);
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    overflow: hidden; /* 防止内部格子超出圆角 */
+}
+
+.grid-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--grid-border);
+    font-weight: 700;
+    font-family: var(--font-family);
+    color: #000;
+    cursor: default;
+    user-select: none;
+    background-color: #fff;
+    line-height: 1; /* 防止行高撑大格子 */
+    overflow: hidden; /* 防止内容溢出 */
+}
+
+/* 适配超大屏幕，限制最大尺寸 */
+@media (min-width: 600px) {
+    :root {
+        --scale-factor: 1.2rem;
+    }
+    .grid-container {
+        max-width: 480px;
+        max-height: 480px;
+    }
+}
+
+footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* =========================================
+   打印模式样式优化 (@media print)
+   ========================================= */
+@media print {
+    :root {
+        --scale-factor: 1.0rem; /* 减小打印时的字体基准大小，防止撑破网格导致最后一行被裁剪 */
+    }
+    
+    /* 强制 A4 竖向，设置边距 */
+    @page {
+        size: A4 portrait;
+        margin: 20mm;
+    }
+
+    body {
+        background-color: white;
+        color: black;
+        align-items: flex-start;
+    }
+
+    .app-container {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+        justify-content: flex-start;
+    }
+
+    /* 隐藏所有控制元素、背景和屏幕专用元素 */
+    .no-print, .screen-only {
+        display: none !important;
+    }
+
+    /* 显示打印专用标题 */
+    .only-print {
+        display: block;
+        width: 100%;
+    }
+
+    .print-header {
+        text-align: center;
+        margin-bottom: 10mm;
+    }
+
+    .print-title {
+        font-size: 22pt;
+        font-weight: 800;
+        margin-bottom: 8mm;
+        letter-spacing: 2px;
+    }
+
+    .print-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12pt;
+        border-bottom: 2px solid black;
+        padding-bottom: 4mm;
+    }
+
+    /* 打印 4 宫格布局 */
+    .print-grid-layout {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr; /* 两列 */
+        grid-template-rows: auto auto;  /* 自适应行高 */
+        gap: 15mm;                      /* 增大网格之间的间距，使排版更舒展 */
+        width: 100%;
+        margin-top: 5mm;
+        page-break-inside: avoid;       /* 尽量避免分页时切断整个容器 */
+    }
+
+    .print-grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        page-break-inside: avoid;       /* 避免单个网格被分页切断 */
+    }
+
+    .print-grid-label {
+        font-size: 14pt;
+        font-weight: bold;
+        margin-bottom: 6mm;
+    }
+
+    /* 打印时的网格样式：去除阴影和圆角，边框变细 */
+    .grid-container {
+        width: 100%; 
+        aspect-ratio: 1 / 1;
+        max-width: none;
+        max-height: none;
+        box-shadow: none;
+        border-radius: 0;
+        border: 2px solid black; /* 外边框变细 */
+        margin: 0 auto;
+        overflow: hidden; /* 确保内容不溢出 */
+    }
+
+    .grid-cell {
+        border: 0.5px solid black; /* 内部线条变细 */
+        color: black;
+        overflow: hidden; /* 防止文字溢出导致行高被撑大 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
