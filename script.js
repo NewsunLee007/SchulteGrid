@@ -4,6 +4,147 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPrint = document.getElementById('btn-print');
     const gridContainer = document.getElementById('schulte-grid');
     const printSizeLabel = document.getElementById('print-size');
+    
+    // 计时器相关 DOM
+    const timerValue = document.getElementById('timer-value');
+    const btnFinish = document.getElementById('btn-finish');
+    const btnHistory = document.getElementById('btn-history');
+    const historyModal = document.getElementById('history-modal');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const historyList = document.getElementById('history-list');
+    const btnClearHistory = document.getElementById('btn-clear-history');
+
+    // 计时器状态
+    let startTime = 0;
+    let timerInterval = null;
+    let isTiming = false;
+
+    // 格式化时间为 mm:ss.ms
+    function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const milliseconds = Math.floor((ms % 1000) / 10);
+        
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+    }
+
+    // 更新计时器显示
+    function updateTimer() {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        timerValue.textContent = formatTime(elapsedTime);
+    }
+
+    // 开始计时
+    function startTimer() {
+        if (isTiming) return;
+        isTiming = true;
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 10);
+        btnFinish.disabled = false;
+        btnGenerate.disabled = true; // 训练期间禁用重新生成
+        gridSizeSelect.disabled = true;
+    }
+
+    // 停止计时
+    function stopTimer() {
+        if (!isTiming) return;
+        clearInterval(timerInterval);
+        isTiming = false;
+        btnFinish.disabled = true;
+        btnGenerate.disabled = false;
+        gridSizeSelect.disabled = false;
+        
+        const finalTimeMs = Date.now() - startTime;
+        saveHistory(finalTimeMs);
+        alert(`训练结束！\n用时：${formatTime(finalTimeMs)}`);
+    }
+
+    // 重置计时器
+    function resetTimer() {
+        clearInterval(timerInterval);
+        isTiming = false;
+        timerValue.textContent = '00:00.00';
+        btnFinish.disabled = true;
+        btnGenerate.disabled = false;
+        gridSizeSelect.disabled = false;
+    }
+
+    // 历史记录相关功能
+    function getHistory() {
+        const history = localStorage.getItem('schulteHistory');
+        return history ? JSON.parse(history) : [];
+    }
+
+    function saveHistory(timeMs) {
+        const history = getHistory();
+        const size = gridSizeSelect.value;
+        const record = {
+            id: Date.now(),
+            date: new Date().toLocaleString('zh-CN', { 
+                year: 'numeric', month: '2-digit', day: '2-digit', 
+                hour: '2-digit', minute: '2-digit' 
+            }),
+            size: `${size}×${size}`,
+            timeStr: formatTime(timeMs),
+            timeMs: timeMs
+        };
+        history.unshift(record); // 添加到开头
+        // 最多保留 50 条记录
+        if (history.length > 50) history.pop();
+        localStorage.setItem('schulteHistory', JSON.stringify(history));
+    }
+
+    function renderHistory() {
+        const history = getHistory();
+        historyList.innerHTML = '';
+        
+        if (history.length === 0) {
+            historyList.innerHTML = '<li class="empty-state">暂无训练记录</li>';
+            return;
+        }
+
+        history.forEach(record => {
+            const li = document.createElement('li');
+            li.className = 'history-item';
+            li.innerHTML = `
+                <div class="history-info">
+                    <span class="history-size">规格：${record.size}</span>
+                    <span class="history-date">${record.date}</span>
+                </div>
+                <div class="history-time">${record.timeStr}</div>
+            `;
+            historyList.appendChild(li);
+        });
+    }
+
+    // 弹窗控制
+    btnHistory.addEventListener('click', () => {
+        renderHistory();
+        historyModal.classList.remove('hidden');
+    });
+
+    btnCloseModal.addEventListener('click', () => {
+        historyModal.classList.add('hidden');
+    });
+
+    btnClearHistory.addEventListener('click', () => {
+        if (confirm('确定要清空所有历史记录吗？此操作不可恢复。')) {
+            localStorage.removeItem('schulteHistory');
+            renderHistory();
+        }
+    });
+
+    // 点击外部区域关闭弹窗
+    historyModal.addEventListener('click', (e) => {
+        if (e.target === historyModal) {
+            historyModal.classList.add('hidden');
+        }
+    });
+
+    // 绑定结束按钮
+    btnFinish.addEventListener('click', stopTimer);
 
     // Fisher-Yates 洗牌算法
     function shuffle(array) {
@@ -55,6 +196,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.className = 'grid-cell';
             cell.textContent = num;
             cell.style.fontSize = `calc(${fontSizeMultiplier} * var(--scale-factor))`;
+            
+            // 点击单元格开始计时
+            cell.addEventListener('click', () => {
+                if (!isTiming) {
+                    startTimer();
+                }
+            });
+            
             container.appendChild(cell);
         });
 
@@ -63,6 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 生成屏幕显示的单个主网格
     function generateGrid() {
+        // 生成前先重置可能在运行的计时器
+        resetTimer();
+        
         const size = parseInt(gridSizeSelect.value, 10);
         
         // 更新打印时的标签显示
