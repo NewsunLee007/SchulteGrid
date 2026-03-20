@@ -111,10 +111,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // 当下拉菜单改变时自动重新生成
     gridSizeSelect.addEventListener('change', generateGrid);
 
+    // 判断是否在微信内置浏览器中
+    function isWechat() {
+        const ua = navigator.userAgent.toLowerCase();
+        return ua.indexOf('micromessenger') !== -1;
+    }
+
+    // 判断是否在移动端
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
     // 绑定打印/导出 PDF 按钮
     btnPrint.addEventListener('click', () => {
-        preparePrintGrids(); // 每次打印前动态生成 4 个新的网格
-        window.print();
+        if (isWechat()) {
+            alert('微信内置浏览器不支持直接打印和导出 PDF 功能。\n\n请点击右上角「...」，选择「在浏览器打开」或「在 Safari 中打开」，然后再点击此按钮即可。');
+            return;
+        }
+        
+        // 尝试调用打印，如果抛出异常（部分特殊环境）给出提示
+        try {
+            preparePrintGrids(); // 每次打印前动态生成 4 个新的网格
+            
+            // Safari 移动端某些情况下调用 print() 后界面可能需要短暂延迟
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        } catch (e) {
+            alert('您的浏览器当前不支持打印功能，请尝试更换其他系统浏览器（如 Safari 或 Chrome）。');
+        }
     });
 
     // 初始生成一次
