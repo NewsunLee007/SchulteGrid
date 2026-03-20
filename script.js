@@ -197,12 +197,21 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.textContent = num;
             cell.style.fontSize = `calc(${fontSizeMultiplier} * var(--scale-factor))`;
             
-            // 点击单元格开始计时
-            cell.addEventListener('click', () => {
+            // 统一的触摸/点击处理函数
+            const handleCellInteraction = (e) => {
+                // 阻止默认行为（比如移动端的双击缩放、滚动等）
+                if (e.type === 'touchstart') {
+                    e.preventDefault();
+                }
+                
                 if (!isTiming) {
                     startTimer();
                 }
-            });
+            };
+
+            // 同时绑定 click 和 touchstart，解决移动端点击不灵敏的问题
+            cell.addEventListener('click', handleCellInteraction);
+            cell.addEventListener('touchstart', handleCellInteraction, { passive: false });
             
             container.appendChild(cell);
         });

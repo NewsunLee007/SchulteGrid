@@ -212,25 +212,33 @@ body {
     border-top: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center; /* 居中对齐 */
+    gap: 16px;
 }
 
 .timer-display {
     text-align: center;
     font-family: monospace;
     font-variant-numeric: tabular-nums;
+    width: 100%;
 }
 
 #timer-value {
-    font-size: 2.5rem;
+    font-size: 2.8rem; /* 稍微调大一点点，使其更醒目 */
     font-weight: 800;
     color: var(--primary-color);
     letter-spacing: -0.05em;
+    line-height: 1;
 }
 
 .timer-actions {
     display: flex;
     gap: 12px;
+    width: 100%; /* 让按钮占满宽度 */
+}
+
+.timer-actions .btn {
+    flex: 1; /* 让按钮等分空间 */
 }
 
 /* 历史记录弹窗 */
